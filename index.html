@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .container {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .form-container {
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        button {
+            padding: 12px 24px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .error-message {
+            color: #d32f2f;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .tasks-container {
+            margin-top: 30px;
+        }
+
+        .tasks-title {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .task-list {
+            list-style: none;
+        }
+
+        .task-item {
+            background-color: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border-left: 4px solid #4CAF50;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .task-item.completed {
+            border-left-color: #2196F3;
+            opacity: 0.7;
+        }
+
+        .task-content {
+            flex: 1;
+        }
+
+        .task-title {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .task-item.completed .task-title {
+            text-decoration: line-through;
+            color: #666;
+        }
+
+        .task-status {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .task-status.completed {
+            color: #2196F3;
+            font-weight: 500;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .task-button {
+            padding: 8px 16px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .task-button:hover {
+            background-color: #1976D2;
+        }
+
+        .task-button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .task-item.completed .task-button {
+            background-color: #4CAF50;
+        }
+
+        .task-item.completed .task-button:hover {
+            background-color: #45a049;
+        }
+
+        .loading {
+            text-align: center;
+            color: #666;
+            padding: 20px;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #999;
+            padding: 40px;
+            font-style: italic;
+        }
+
+        .view-link {
+            color: #2196F3;
+            text-decoration: none;
+            font-size: 14px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .view-link:hover {
+            text-decoration: underline;
+        }
+
+        .task-detail-container {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            border-left: 4px solid #2196F3;
+        }
+
+        .task-detail-container.show {
+            display: block;
+        }
+
+        .task-detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .task-detail-title {
+            font-size: 24px;
+            color: #333;
+            margin: 0;
+        }
+
+        .task-detail-info {
+            margin: 15px 0;
+        }
+
+        .task-detail-label {
+            font-weight: 600;
+            color: #666;
+            margin-right: 10px;
+        }
+
+        .task-detail-value {
+            color: #333;
+        }
+
+        .back-button {
+            padding: 10px 20px;
+            background-color: #666;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .back-button:hover {
+            background-color: #555;
+        }
+
+        .task-detail-actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📝 Task Tracker</h1>
+        
+        <div class="form-container">
+            <div class="input-group">
+                <input 
+                    type="text" 
+                    id="taskInput" 
+                    placeholder="Escribe el título de la tarea (3-80 caracteres)"
+                    maxlength="80"
+                >
+                <button id="createButton" onclick="createTask()">Crear Tarea</button>
+            </div>
+            <div class="error-message" id="errorMessage"></div>
+        </div>
+
+        <div class="tasks-container" id="tasksContainer">
+            <h2 class="tasks-title">Tareas</h2>
+            <div id="loading" class="loading" style="display: none;">Cargando...</div>
+            <ul class="task-list" id="taskList"></ul>
+        </div>
+
+        <div class="task-detail-container" id="taskDetailContainer">
+            <div class="task-detail-header">
+                <h2 class="task-detail-title" id="taskDetailTitle">Detalle de Tarea</h2>
+                <button class="back-button" onclick="showTaskList()">← Volver a la lista</button>
+            </div>
+            <div id="taskDetailContent">
+                <div class="loading">Cargando...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api/tasks';
+        const taskInput = document.getElementById('taskInput');
+        const createButton = document.getElementById('createButton');
+        const taskList = document.getElementById('taskList');
+        const errorMessage = document.getElementById('errorMessage');
+        const loading = document.getElementById('loading');
+
+        // Permitir crear tarea con Enter
+        taskInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                createTask();
+            }
+        });
+
+        // Cargar tareas al iniciar
+        loadTasks();
+
+        async function loadTasks() {
+            try {
+                loading.style.display = 'block';
+                const response = await fetch(API_URL);
+                if (!response.ok) {
+                    throw new Error('Error al cargar las tareas');
+                }
+                const tasks = await response.json();
+                displayTasks(tasks);
+            } catch (error) {
+                console.error('Error:', error);
+                taskList.innerHTML = '<li class="empty-state">Error al cargar las tareas. Asegúrate de que el servidor esté ejecutándose.</li>';
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        async function createTask() {
+            const title = taskInput.value.trim();
+            
+            // Limpiar mensaje de error
+            hideError();
+
+            // Validación básica en el cliente
+            if (!title) {
+                showError('El título de la tarea es requerido');
+                return;
+            }
+
+            if (title.length < 3) {
+                showError('El título debe tener al menos 3 caracteres');
+                return;
+            }
+
+            if (title.length > 80) {
+                showError('El título no puede tener más de 80 caracteres');
+                return;
+            }
+
+            // Deshabilitar botón mientras se procesa
+            createButton.disabled = true;
+            createButton.textContent = 'Creando...';
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ title: title })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Error al crear la tarea');
+                }
+
+                // Limpiar input y recargar tareas
+                taskInput.value = '';
+                await loadTasks();
+            } catch (error) {
+                console.error('Error:', error);
+                showError(error.message || 'Error al crear la tarea');
+            } finally {
+                createButton.disabled = false;
+                createButton.textContent = 'Crear Tarea';
+            }
+        }
+
+        function displayTasks(tasks) {
+            if (tasks.length === 0) {
+                taskList.innerHTML = '<li class="empty-state">No hay tareas. ¡Crea una nueva!</li>';
+                return;
+            }
+
+            taskList.innerHTML = tasks.map(task => `
+                <li class="task-item ${task.completed ? 'completed' : ''}">
+                    <div class="task-content">
+                        <div class="task-title">
+                            ${escapeHtml(task.title)}
+                            <a href="#" class="view-link" onclick="viewTaskDetail(${task.id}); return false;">Ver detalles</a>
+                        </div>
+                        <div class="task-status ${task.completed ? 'completed' : ''}">
+                            ${task.completed ? '✓ Completada' : '○ Pendiente'}
+                        </div>
+                    </div>
+                    <div class="task-actions">
+                        <button class="task-button" onclick="toggleTask(${task.id})" id="task-btn-${task.id}">
+                            ${task.completed ? 'Marcar Pendiente' : 'Marcar Completada'}
+                        </button>
+                    </div>
+                </li>
+            `).join('');
+        }
+
+        async function toggleTask(taskId) {
+            const button = document.getElementById(`task-btn-${taskId}`);
+            if (!button) return;
+
+            // Deshabilitar botón mientras se procesa
+            button.disabled = true;
+            const originalText = button.textContent;
+            button.textContent = 'Actualizando...';
+
+            // Limpiar mensaje de error previo
+            hideError();
+
+            try {
+                const response = await fetch(`${API_URL}/${taskId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Error al actualizar la tarea');
+                }
+
+                // Recargar tareas para mostrar el estado actualizado
+                await loadTasks();
+            } catch (error) {
+                console.error('Error:', error);
+                showError(error.message || 'Error al actualizar la tarea. Asegúrate de que el servidor esté ejecutándose.');
+                // Restaurar botón en caso de error
+                button.disabled = false;
+                button.textContent = originalText;
+            }
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.add('show');
+        }
+
+        function hideError() {
+            errorMessage.classList.remove('show');
+        }
+
+        async function viewTaskDetail(taskId) {
+            // Ocultar lista de tareas
+            document.getElementById('tasksContainer').style.display = 'none';
+            
+            // Mostrar contenedor de detalle
+            const detailContainer = document.getElementById('taskDetailContainer');
+            detailContainer.classList.add('show');
+            
+            // Mostrar loading
+            document.getElementById('taskDetailContent').innerHTML = '<div class="loading">Cargando...</div>';
+            
+            // Limpiar mensaje de error previo
+            hideError();
+
+            try {
+                const response = await fetch(`${API_URL}/${taskId}`);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Error al cargar la tarea');
+                }
+
+                displayTaskDetail(data);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('taskDetailContent').innerHTML = `
+                    <div class="empty-state">
+                        ${error.message || 'Error al cargar la tarea. Asegúrate de que el servidor esté ejecutándose.'}
+                    </div>
+                `;
+            }
+        }
+
+        function displayTaskDetail(task) {
+            const detailContent = document.getElementById('taskDetailContent');
+            const detailTitle = document.getElementById('taskDetailTitle');
+            
+            detailTitle.textContent = escapeHtml(task.title);
+            
+            const createdAt = new Date(task.createdAt).toLocaleString('es-ES', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            detailContent.innerHTML = `
+                <div class="task-detail-info">
+                    <span class="task-detail-label">ID:</span>
+                    <span class="task-detail-value">${task.id}</span>
+                </div>
+                <div class="task-detail-info">
+                    <span class="task-detail-label">Título:</span>
+                    <span class="task-detail-value">${escapeHtml(task.title)}</span>
+                </div>
+                <div class="task-detail-info">
+                    <span class="task-detail-label">Estado:</span>
+                    <span class="task-detail-value ${task.completed ? 'completed' : ''}" style="font-weight: 500;">
+                        ${task.completed ? '✓ Completada' : '○ Pendiente'}
+                    </span>
+                </div>
+                <div class="task-detail-info">
+                    <span class="task-detail-label">Fecha de creación:</span>
+                    <span class="task-detail-value">${createdAt}</span>
+                </div>
+                <div class="task-detail-actions">
+                    <button class="task-button" onclick="toggleTaskFromDetail(${task.id})" id="detail-task-btn-${task.id}">
+                        ${task.completed ? 'Marcar Pendiente' : 'Marcar Completada'}
+                    </button>
+                </div>
+            `;
+        }
+
+        async function showTaskList() {
+            // Ocultar detalle
+            document.getElementById('taskDetailContainer').classList.remove('show');
+            
+            // Mostrar lista de tareas
+            document.getElementById('tasksContainer').style.display = 'block';
+            
+            // Recargar las tareas para mostrar el estado actualizado
+            await loadTasks();
+        }
+
+        async function toggleTaskFromDetail(taskId) {
+            const button = document.getElementById(`detail-task-btn-${taskId}`);
+            if (!button) return;
+
+            // Deshabilitar botón mientras se procesa
+            button.disabled = true;
+            const originalText = button.textContent;
+            button.textContent = 'Actualizando...';
+
+            // Limpiar mensaje de error previo
+            hideError();
+
+            try {
+                const response = await fetch(`${API_URL}/${taskId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Error al actualizar la tarea');
+                }
+
+                // Actualizar la vista de detalle con los nuevos datos
+                displayTaskDetail(data);
+            } catch (error) {
+                console.error('Error:', error);
+                showError(error.message || 'Error al actualizar la tarea. Asegúrate de que el servidor esté ejecutándose.');
+                // Restaurar botón en caso de error
+                button.disabled = false;
+                button.textContent = originalText;
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>
+
