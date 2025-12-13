@@ -297,7 +297,9 @@
     </div>
 
     <script>
-        const API_URL = 'http://localhost:3000/api/tasks';
+        // Detectar automáticamente la URL de la API
+        // Funciona tanto en localhost como en producción
+        const API_URL = `${window.location.origin}/api/tasks`;
         const taskInput = document.getElementById('taskInput');
         const createButton = document.getElementById('createButton');
         const taskList = document.getElementById('taskList');
