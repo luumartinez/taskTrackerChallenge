@@ -2,6 +2,8 @@
 
 Aplicación web simple para gestionar tareas (to-do) con backend HTTP y base de datos MongoDB.
 
+🚀 **Demo en vivo:** [https://tasktrakertest.onrender.com/#](https://tasktrakertest.onrender.com/#)
+
 ## Características
 
 - ✅ Crear tareas con validación (3-80 caracteres)
@@ -18,82 +20,87 @@ Aplicación web simple para gestionar tareas (to-do) con backend HTTP y base de 
 - **Frontend**: HTML, CSS, JavaScript vanilla
 - **Testing**: Jest + Supertest
 
-## Instalación
+---
 
-1. Clonar el repositorio
+## 🛠 Ejecución Local
+
+Sigue estos pasos para ejecutar el backend, el frontend y los tests en tu máquina local.
+
+### 1. Instalación
+
+1. Clonar el repositorio:
+   ```bash
+   git clone LINK_A_TU_REPO
+   cd task-tracker
+   ```
+
 2. Instalar dependencias:
-```bash
-npm install
-```
+   ```bash
+   npm install
+   ```
 
 3. Configurar variables de entorno:
-```bash
-cp .env.example .env
-```
+   ```bash
+   cp .env.example .env
+   ```
 
-4. Editar `.env` y configurar `MONGODB_URI`:
-   - Para desarrollo local: `mongodb://localhost:27017/tasktracker`
-   - Para MongoDB Atlas: usar la connection string de tu cluster
+4. Editar `.env` con tu URI de MongoDB (Local o Atlas):
+   ```env
+   MONGODB_URI=mongodb://localhost:27017/tasktracker
+   PORT=3000
+   ```
 
-## Configuración de MongoDB Atlas (Recomendado)
+### 2. Ejecutar Backend y Frontend
 
-1. Crear cuenta en [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
-2. Crear un cluster gratuito (M0)
-3. Crear un usuario de base de datos
-4. Configurar IP whitelist (0.0.0.0/0 para desarrollo)
-5. Obtener la connection string
-6. Reemplazar `<password>` y `<dbname>` en la connection string
-7. Agregar la connection string a `.env` como `MONGODB_URI`
+El servidor de Node.js se encarga de levantar la API y servir los archivos estáticos del frontend.
 
-## Ejecución
+1. Iniciar el servidor:
+   ```bash
+   npm start
+   ```
 
-### Desarrollo
-```bash
-npm start
-```
+2. **Acceder al Frontend:**
+   Abrir en el navegador: `http://localhost:3000`
 
-### Tests
+### 3. Ejecutar Tests (Unit & API)
+
+El proyecto incluye tests unitarios para la lógica de negocio y tests de integración para los endpoints.
+
+**Correr todos los tests:**
 ```bash
 npm test
 ```
 
-## Despliegue
+---
 
-### Render (Recomendado)
+## ☁️ Despliegue (Referencia)
 
-1. Crear cuenta en [Render](https://render.com)
-2. Conectar tu repositorio de GitHub
-3. Crear un nuevo Web Service
-4. Configurar:
-   - **Build Command**: `npm install`
-   - **Start Command**: `npm start`
-   - **Environment Variables**:
-     - `MONGODB_URI`: tu connection string de MongoDB Atlas
-     - `PORT`: Render lo asigna automáticamente
-5. Desplegar
+Esta aplicación está configurada para desplegarse en **Render** con base de datos en **MongoDB Atlas**.
 
-### Alternativas
+### Configuración en Render
 
-- **Railway**: Similar a Render, también gratuito
-- **Vercel**: Para frontend + serverless functions
-- **Heroku**: Tiene tier gratuito limitado
+1. Crear Web Service conectado al repositorio.
+2. Comandos de construcción:
+   - **Build**: `npm install`
+   - **Start**: `npm start`
+3. Variables de entorno requeridas:
+   - `MONGODB_URI`: Connection string de Atlas.
 
 ## Estructura del Proyecto
 
-```
+```text
 ├── config/
-│   └── database.js          # Configuración de MongoDB
+│   └── database.js      # Configuración de MongoDB
 ├── models/
-│   └── Task.js              # Modelo de Task (Mongoose)
+│   └── Task.js          # Modelo de Task (Mongoose)
 ├── routes/
-│   └── tasks.js             # Rutas de la API
+│   └── tasks.js         # Rutas de la API
 ├── services/
 │   ├── taskService.js       # Lógica de negocio
-│   └── taskService.test.js  # Tests unitarios
-├── api.test.js              # Tests de integración
-├── server.js                # Servidor Express
-└── index.html               # Frontend
-
+│   └── taskService.test.js  # ✅ Tests unitarios
+├── api.test.js          # ✅ Tests de integración
+├── server.js            # Servidor Express
+└── index.html           # Frontend
 ```
 
 ## API Endpoints
@@ -106,4 +113,3 @@ npm test
 ## Licencia
 
 ISC
-
