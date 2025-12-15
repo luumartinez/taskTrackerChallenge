@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -262,18 +263,15 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>📝 Task Tracker</h1>
-        
+
         <div class="form-container">
             <div class="input-group">
-                <input 
-                    type="text" 
-                    id="taskInput" 
-                    placeholder="Escribe el título de la tarea (3-80 caracteres)"
-                    maxlength="80"
-                >
+                <input type="text" id="taskInput" placeholder="Escribe el título de la tarea (3-80 caracteres)"
+                    maxlength="80">
                 <button id="createButton" onclick="createTask()">Crear Tarea</button>
             </div>
             <div class="error-message" id="errorMessage"></div>
@@ -335,7 +333,7 @@
 
         async function createTask() {
             const title = taskInput.value.trim();
-            
+
             // Limpiar mensaje de error
             hideError();
 
@@ -393,22 +391,22 @@
             }
 
             taskList.innerHTML = tasks.map(task => `
-                <li class="task-item ${task.completed ? 'completed' : ''}">
-                    <div class="task-content">
-                        <div class="task-title">
-                            ${escapeHtml(task.title)}
-                            <a href="#" class="view-link" onclick="viewTaskDetail(${task.id}); return false;">Ver detalles</a>
-                        </div>
-                        <div class="task-status ${task.completed ? 'completed' : ''}">
-                            ${task.completed ? '✓ Completada' : '○ Pendiente'}
-                        </div>
+            <li class="task-item ${task.completed ? 'completed' : ''}">
+                <div class="task-content">
+                    <div class="task-title">
+                        ${escapeHtml(task.title)}
+                        <a href="#" class="view-link" onclick="viewTaskDetail('${task.id}'); return false;">Ver detalles</a>
                     </div>
-                    <div class="task-actions">
-                        <button class="task-button" onclick="toggleTask(${task.id})" id="task-btn-${task.id}">
-                            ${task.completed ? 'Marcar Pendiente' : 'Marcar Completada'}
-                        </button>
+                    <div class="task-status ${task.completed ? 'completed' : ''}">
+                        ${task.completed ? '✓ Completada' : '○ Pendiente'}
                     </div>
-                </li>
+                </div>
+                <div class="task-actions">
+                    <button class="task-button" onclick="toggleTask('${task.id}')" id="task-btn-${task.id}">
+                        ${task.completed ? 'Marcar Pendiente' : 'Marcar Completada'}
+                    </button>
+                </div>
+            </li>
             `).join('');
         }
 
@@ -461,14 +459,14 @@
         async function viewTaskDetail(taskId) {
             // Ocultar lista de tareas
             document.getElementById('tasksContainer').style.display = 'none';
-            
+
             // Mostrar contenedor de detalle
             const detailContainer = document.getElementById('taskDetailContainer');
             detailContainer.classList.add('show');
-            
+
             // Mostrar loading
             document.getElementById('taskDetailContent').innerHTML = '<div class="loading">Cargando...</div>';
-            
+
             // Limpiar mensaje de error previo
             hideError();
 
@@ -494,9 +492,9 @@
         function displayTaskDetail(task) {
             const detailContent = document.getElementById('taskDetailContent');
             const detailTitle = document.getElementById('taskDetailTitle');
-            
+
             detailTitle.textContent = escapeHtml(task.title);
-            
+
             const createdAt = new Date(task.createdAt).toLocaleString('es-ES', {
                 year: 'numeric',
                 month: 'long',
@@ -525,7 +523,7 @@
                     <span class="task-detail-value">${createdAt}</span>
                 </div>
                 <div class="task-detail-actions">
-                    <button class="task-button" onclick="toggleTaskFromDetail(${task.id})" id="detail-task-btn-${task.id}">
+                    <button class="task-button" onclick="toggleTaskFromDetail('${task.id}')" id="detail-task-btn-${task.id}">
                         ${task.completed ? 'Marcar Pendiente' : 'Marcar Completada'}
                     </button>
                 </div>
@@ -535,10 +533,10 @@
         async function showTaskList() {
             // Ocultar detalle
             document.getElementById('taskDetailContainer').classList.remove('show');
-            
+
             // Mostrar lista de tareas
             document.getElementById('tasksContainer').style.display = 'block';
-            
+
             // Recargar las tareas para mostrar el estado actualizado
             await loadTasks();
         }
@@ -587,5 +585,5 @@
         }
     </script>
 </body>
-</html>
 
+</html>
